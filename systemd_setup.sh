@@ -1,6 +1,6 @@
 #!/bin/sh
 
-if [ -z "$1" ] || [ -z "$2" ]; then
+if [ -z "$1" ] || [ -z "$2" ] || [ -z "$3" ]; then
     echo "Usage: sh systemd_setup.sh listen_host:listen_port USD/GBP,USD/EUR twelvedata_apikey"
     exit 1
 fi;
