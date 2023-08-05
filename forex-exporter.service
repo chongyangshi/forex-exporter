@@ -1,0 +1,16 @@
+[Unit]
+Description=the Forex Exporter metrics server
+After=syslog.target
+
+[Service]
+Type=simple
+User=forexexporter
+Environment="FOREX_EXPORTER_LISTEN?={{FOREX_EXPORTER_LISTEN_VAL}}"
+# Currency pairs should be specified as comma-separated strings, e.g. "USD/GBP,USD/EUR"
+Environment="FOREX_EXPORTER_CURRENCY_PAIRS?={{FOREX_EXPORTER_CURRENCY_PAIRS_VAL}}"
+Environment="FOREX_EXPORTER_TWELVEDATA_API_KEY?={{FOREX_EXPORTER_TWELVEDATA_API_KEY_VAL}}"
+ExecStart=/usr/local/bin/forex-exporter
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
