@@ -37,11 +37,22 @@ var (
 		Namespace: "forex_exporter",
 		Name:      "exchange_rate",
 		Help:      "Record the exchange rate between a currency pair",
-	}, []string{"source_currency", "target_currency"})
+	}, []string{"source_currency", "target_currency", "data_source"})
+	exchangeRateTimestampMetrics = promauto.NewGaugeVec(prometheus.GaugeOpts{
+		Namespace: "forex_exporter",
+		Name:      "exchange_rate_timestamp",
+		Help:      "The UNIX timestamp when the exchange rate between a currency pair was last published",
+	}, []string{"source_currency", "target_currency", "data_source"})
 )
 
-func registerForexRate(source_currency, targetCurrency string, rate float64) {
-	exchangeRateMetrics.WithLabelValues(source_currency, targetCurrency).Set(rate)
+func registerForexRate(source_currency, targetCurrency, dataSource string, rate float64) {
+	exchangeRateMetrics.WithLabelValues(source_currency, targetCurrency, dataSource).Set(rate)
+}
+
+// This timestamp is supplied by the data source for when the forex rate was last published,
+// as forex markets generally close on the weekend and at certain other times.
+func registerForexRateTimestamp(source_currency, targetCurrency, dataSource string, timestamp int) {
+	exchangeRateTimestampMetrics.WithLabelValues(source_currency, targetCurrency, dataSource).Set(float64(timestamp))
 }
 
 func startMetricsServer(errChan chan error) error {

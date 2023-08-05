@@ -72,25 +72,28 @@ func (f twelvedataExchangeRateFetcher) getName() string {
 	return "twelvedata"
 }
 
-func (f twelvedataExchangeRateFetcher) fetchRate(ctx context.Context, sourceCurrency, targetCurrency string) (float64, error) {
+func (f twelvedataExchangeRateFetcher) fetchRate(ctx context.Context, sourceCurrency, targetCurrency string) (*currencyExchangeRate, error) {
 	requestURL := fmt.Sprintf(twelvedataAPIURLTemplate, sourceCurrency, targetCurrency, f.apiKey)
 	r := typhon.NewRequest(ctx, http.MethodGet, requestURL, nil).SendVia(f.client).Response()
 	if r.Error != nil {
 		slog.Error(ctx, "Received error from twelvedata API: %+v", r.Error)
-		return 0, r.Error
+		return nil, r.Error
 	}
 
 	rawResp, err := r.BodyBytes(true)
 	if err != nil {
 		slog.Error(ctx, "Error reading response from twelvedata API: %+v", err)
-		return 0, err
+		return nil, err
 	}
 
 	var resp = twelvedataExchangeRateResponse{}
 	if err := json.Unmarshal(rawResp, &resp); err != nil {
 		slog.Error(ctx, "Error parsing response from twelvedata API: %+v", err)
-		return 0, err
+		return nil, err
 	}
 
-	return resp.Rate, nil
+	return &currencyExchangeRate{
+		Rate:      resp.Rate,
+		Timestamp: resp.Timestamp,
+	}, nil
 }

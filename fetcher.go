@@ -19,11 +19,16 @@ type currencyPair struct {
 	Target string
 }
 
+type currencyExchangeRate struct {
+	Rate      float64
+	Timestamp int
+}
+
 type exchangeRateFetcher interface {
 	initFetcher(ctx context.Context, currencyPairs []currencyPair) error
 	getIntervalSeconds() int
 	getName() string
-	fetchRate(ctx context.Context, sourceCurrency, targetCurrency string) (float64, error)
+	fetchRate(ctx context.Context, sourceCurrency, targetCurrency string) (*currencyExchangeRate, error)
 }
 
 func getCurrencyPairsFromEnv() ([]currencyPair, error) {
@@ -91,7 +96,8 @@ func startFetcher(ctx context.Context, fetcher exchangeRateFetcher) error {
 					}
 
 					slog.Debug(ctx, "Registering forex rate %f for %s/%s", rate, cPair.Source, cPair.Target)
-					registerForexRate(cPair.Source, cPair.Target, rate)
+					registerForexRate(cPair.Source, cPair.Target, fetcher.getName(), rate.Rate)
+					registerForexRateTimestamp(cPair.Source, cPair.Target, fetcher.getName(), rate.Timestamp)
 					return nil
 				})
 			}
