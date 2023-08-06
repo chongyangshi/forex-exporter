@@ -4,6 +4,8 @@ The `forex-exporter` is a simgle [Prometheus](https://github.com/prometheus/prom
 
 If refreshing the dashboards of your favourite forex provider and setting [limit orders](https://wise.com/help/articles/0QO88oPwfcCqgAX1fvN6D/what-are-auto-conversions) are not enough for you, then this might be exactly what you need.
 
+<img width="945" alt="Prometheus metrics example" src="https://github.com/chongyangshi/forex-exporter/assets/8771937/cd417b59-f4c9-47a8-b6df-d9552873de1c">
+
 The exporter current uses [Twelve Data](https://twelvedata.com/docs#exchange-rate) as the data source, which provides a free tier. The codebase should have the flexibility to integrate additional providers. 
 
 ## How to use
